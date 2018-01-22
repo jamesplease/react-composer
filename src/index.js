@@ -36,8 +36,8 @@ export default function Composer({ components = [], render, renderPropName }) {
     childrenComponentsClone.pop();
 
     return React.cloneElement(component, {
-      [renderPropName](data) {
-        responses[responseIndex] = data;
+      [renderPropName](result) {
+        responses[responseIndex] = result;
         return chainComponents(childrenComponentsClone);
       }
     });
