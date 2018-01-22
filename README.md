@@ -4,13 +4,13 @@ Compose render prop components.
 
 ### Motivation
 
-If you use a library that has render props, you may use it like this:
+Using a render prop component looks like the following:
 
 ```jsx
 <RenderPropComponent {...config} render={result => <MyComponent result={result}>}>
 ```
 
-Sometimes you may need the result of multiple `RenderPropComponents` inside of `MyComponent`. This
+Sometimes you need the result of multiple `RenderPropComponents` inside of `MyComponent`. This
 can get messy.
 
 ```jsx
@@ -29,7 +29,7 @@ Nesting render prop components like this is difficult to read. Use React Compose
 clean things up.
 
 ```jsx
-import Composer from "react-composer";
+import Composer from 'react-composer';
 
 <Composer
   components={[
@@ -67,8 +67,9 @@ follows:
 
 ##### `components`
 
-The render prop components to compose. Don't forget to omit the actual
-render prop on the components!
+The render prop components to compose.
+
+If you specify a render prop on the components, it will be ignored.
 
 ##### `renderPropName`
 
