@@ -19,7 +19,13 @@ can get messy.
   render={resultOne => (
     <RenderPropComponent
       {...configTwo}
-      render={resultTwo => <MyComponent results={[resultOne, resultTwo]} />}
+      render={resultTwo => (
+        <RenderPropComponent
+          {...configThree}
+          render={resultThree => (
+            <MyComponent results={[resultOne, resultTwo, resultThree]} />
+          )}>
+      )}
     />
   )}
 />
@@ -34,10 +40,11 @@ import Composer from 'react-composer';
 <Composer
   components={[
     <RenderPropComponent {...configOne} />,
-    <RenderPropComponent {...configTwo} />
+    <RenderPropComponent {...configTwo} />,
+    <RenderPropComponent {...configThree} />
   ]}
-  render={([resultOne, resultTwo]) => (
-    <MyComponent results={[resultOne, resultTwo]} />
+  render={([resultOne, resultTwo, resultThree]) => (
+    <MyComponent results={[resultOne, resultTwo, resultThree]} />
   )}
 />;
 ```
