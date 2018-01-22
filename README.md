@@ -13,7 +13,7 @@ Using a render prop component looks like the following:
 />
 ```
 
-Sometimes you need the result of multiple `RenderPropComponents` inside of `MyComponent`. This
+Sometimes you need the result of multiple `RenderPropComponent`s inside of `MyComponent`. This
 can get messy.
 
 ```jsx
