@@ -7,7 +7,10 @@ Compose render prop components.
 Using a render prop component looks like the following:
 
 ```jsx
-<RenderPropComponent {...config} render={result => <MyComponent result={result}>}>
+<RenderPropComponent
+  {...config}
+  render={result => <MyComponent result={result} />}
+/>
 ```
 
 Sometimes you need the result of multiple `RenderPropComponents` inside of `MyComponent`. This
