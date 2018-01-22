@@ -1,0 +1,34 @@
+{
+  "env": {
+    "build": {
+      "presets": [["env", { "modules": false }], "stage-3", "react"],
+      "plugins": ["external-helpers", "transform-class-properties"]
+    },
+    "buildProd": {
+      "presets": [["env", { "modules": false }], "stage-3", "react"],
+      "plugins": [
+        "external-helpers",
+        "transform-class-properties",
+        [
+          "transform-react-remove-prop-types",
+          { "mode": "remove", "removeImport": true }
+        ]
+      ]
+    },
+    "es": {
+      "presets": [["env", { "modules": false }], "stage-3", "react"],
+      "plugins": ["transform-class-properties"]
+    },
+    "commonjs": {
+      "plugins": [
+        ["transform-es2015-modules-commonjs", { "loose": true }],
+        "transform-class-properties"
+      ],
+      "presets": ["stage-3", "react"]
+    },
+    "test": {
+      "presets": ["env", "stage-3", "react"],
+      "plugins": ["transform-class-properties"]
+    }
+  }
+}
