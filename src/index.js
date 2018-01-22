@@ -20,13 +20,13 @@ export default function Composer({ components = [], render, renderPropName }) {
       return render(responses);
     }
 
-    const requestIndex = childrenComponents.length - 1;
-    const request = components[requestIndex];
+    const componentIndex = childrenComponents.length - 1;
+    const component = components[componentIndex];
 
     // This is the index of where we should place the response within `responses`.
-    // It's not the same as `requestIndex` because we reversed the components when
+    // It's not the same as `componentIndex` because we reversed the components when
     // rendering out the components.
-    // In a sense, it can be thought of as the "reverse" index of `requestIndex`.
+    // In a sense, it can be thought of as the "reverse" index of `componentIndex`.
     const responseIndex = reversedComponents.length - childrenComponents.length;
 
     // We create a clone of the childrenComponents so that subsequent calls to `render`
@@ -35,8 +35,8 @@ export default function Composer({ components = [], render, renderPropName }) {
     const childrenComponentsClone = [...childrenComponents];
     childrenComponentsClone.pop();
 
-    return React.cloneElement(request, {
-      render(data) {
+    return React.cloneElement(component, {
+      [renderPropName](data) {
         responses[responseIndex] = data;
         return chainComponents(childrenComponentsClone);
       }
