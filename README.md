@@ -119,7 +119,9 @@ render prop. You could, for instance, map the arguments to an array:
 
 > Note: you won't often need to use this prop, but it's here if you need it.
 
-### Limitations
+### Guides
+
+#### Limitations
 
 This library only works for render prop components that have a single render
 prop. So, for instance, this library will not work if your component has an API like the following:
@@ -127,3 +129,22 @@ prop. So, for instance, this library will not work if your component has an API 
 ```jsx
 <RenderPropComponent onSuccess={onSuccess} onError={onError} />
 ```
+
+#### Render Order
+
+The components render last-to-first. So, for instance, if you pass
+
+```jsx
+<Composer components={[<A/>, <B/>, <C/>]}>
+```
+
+then your tree will render like so:
+
+```
+- C
+  - B
+    - A
+```
+
+> Note: Do you think the render order should be reversed? I'm open to that change. Leave your comments
+> over in [Issue #7](https://github.com/jmeas/react-composer/issues/7).
