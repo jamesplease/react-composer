@@ -84,7 +84,7 @@ follows:
 
 The render prop components to compose.
 
-If you specify a render prop on the components, it will be ignored.
+> Note: If you specify a render prop on the components, it will be ignored.
 
 ##### `render`
 
