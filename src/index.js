@@ -48,7 +48,8 @@ export default function Composer({ components = [], render, renderPropName }) {
 
 Composer.propTypes = {
   render: PropTypes.func,
-  components: PropTypes.array
+  components: PropTypes.array,
+  renderPropName: PropTypes.string
 };
 
 Composer.defaultProps = {
