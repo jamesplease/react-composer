@@ -1,7 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default function Composer({ components = [], render, renderPropName }) {
+export default function Composer({
+  components = [],
+  render,
+  renderPropName,
+  mapResult
+}) {
   if (typeof render !== 'function') {
     return null;
   }
@@ -36,8 +41,12 @@ export default function Composer({ components = [], render, renderPropName }) {
     childrenComponentsClone.pop();
 
     return React.cloneElement(component, {
-      [renderPropName](result) {
-        responses[responseIndex] = result;
+      [renderPropName]() {
+        if (mapResult) {
+          responses[responseIndex] = mapResult.apply(null, arguments);
+        } else {
+          responses[responseIndex] = arguments[0];
+        }
         return chainComponents(childrenComponentsClone);
       }
     });
@@ -48,7 +57,9 @@ export default function Composer({ components = [], render, renderPropName }) {
 
 Composer.propTypes = {
   render: PropTypes.func,
-  components: PropTypes.array
+  components: PropTypes.array,
+  renderPropName: PropTypes.string,
+  mapResult: PropTypes.func
 };
 
 Composer.defaultProps = {

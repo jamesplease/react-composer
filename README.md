@@ -94,10 +94,35 @@ components.
 
 The name of the component's render prop. Defaults to `"render"`.
 
+> Note: Components typically use `render` or `children` as the render prop. Some
+> even accept both.
+
+##### `mapResult`
+
+A function that is called with the same arguments that each component's render
+prop is caled with. This can be used to change the result that each component passes
+down.
+
+Typically, this is useful for a component that passes multiple arguments to its
+render prop. You could, for instance, map the arguments to an array:
+
+```jsx
+<Composer
+  components={[<RenderPropComponent />]}
+  render={() => { ... }}
+  mapResult={function() {
+    return Array.from(arguments);
+  }}
+/>
+```
+
+> Note: you won't often need to use this prop, but it's here if you need it.
+
 ### Limitations
 
-This library only works for render prop libraries that adhere to the following
-convention:
+This library only works for render prop components that have a single render
+prop. So, for instance, this library will not work if your component has an API like the following:
 
-1. There is only one render prop, and not multiple
-2. The render prop function is passed a single argument
+```jsx
+<RenderPropComponent onSuccess={onSuccess} onError={onError} />
+```

@@ -6,6 +6,14 @@ function Echo({ value, render }) {
   return render({ value });
 }
 
+function EchoChildren({ value, children }) {
+  return children({ value });
+}
+
+function DoubleEcho({ value, render }) {
+  return render(value, value.toUpperCase());
+}
+
 describe('React Composer', () => {
   describe('Null values', () => {
     test('No props', () => {
@@ -81,6 +89,52 @@ describe('React Composer', () => {
           }
         ]
       ]);
+    });
+  });
+
+  describe('Render, one component; custom `renderPropName`', () => {
+    test('It should render the expected result', () => {
+      const mockRender = jest.fn(([result]) => <div>{result.value}</div>);
+
+      const wrapper = mount(
+        <Composer
+          components={[<EchoChildren value="spaghetti" />]}
+          render={mockRender}
+          renderPropName="children"
+        />
+      );
+      expect(wrapper.contains(<div>spaghetti</div>)).toBe(true);
+      expect(mockRender).toHaveBeenCalledTimes(1);
+      expect(mockRender.mock.calls[0]).toEqual([
+        [
+          {
+            value: 'spaghetti'
+          }
+        ]
+      ]);
+    });
+  });
+
+  describe('Render, one component; `mapResult`', () => {
+    test('It should render the expected result', () => {
+      const mockRender = jest.fn(([result]) => (
+        <div>
+          {result[0]} {result[1]}
+        </div>
+      ));
+
+      const wrapper = mount(
+        <Composer
+          components={[<DoubleEcho value="spaghetti" />]}
+          render={mockRender}
+          mapResult={function() {
+            return Array.from(arguments);
+          }}
+        />
+      );
+      expect(wrapper.contains(<div>spaghetti SPAGHETTI</div>)).toBe(true);
+      expect(mockRender).toHaveBeenCalledTimes(1);
+      expect(mockRender.mock.calls[0]).toEqual([[['spaghetti', 'SPAGHETTI']]]);
     });
   });
 });
