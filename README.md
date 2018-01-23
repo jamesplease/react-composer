@@ -8,7 +8,7 @@ Compose render prop components.
 
 ### Motivation
 
-Using a render prop component looks like the following:
+Render props are great. Using a component with a render prop looks like the following:
 
 ```jsx
 <RenderPropComponent
@@ -85,14 +85,14 @@ The render prop components to compose.
 
 If you specify a render prop on the components, it will be ignored.
 
-##### `renderPropName`
-
-The name of the component's render prop. Defaults to `"render"`.
-
 ##### `render`
 
 A function that is called with an array of results from the render prop
 components.
+
+##### `renderPropName`
+
+The name of the component's render prop. Defaults to `"render"`.
 
 ### Limitations
 
