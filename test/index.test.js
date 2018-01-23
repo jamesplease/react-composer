@@ -6,6 +6,10 @@ function Echo({ value, render }) {
   return render({ value });
 }
 
+function EchoChildren({ value, children }) {
+  return children({ value });
+}
+
 describe('React Composer', () => {
   describe('Null values', () => {
     test('No props', () => {
@@ -78,6 +82,29 @@ describe('React Composer', () => {
           },
           {
             value: 'pls'
+          }
+        ]
+      ]);
+    });
+  });
+
+  describe('Render, one component; custom `renderPropName`', () => {
+    test('It should render the expected result', () => {
+      const mockRender = jest.fn(([result]) => <div>{result.value}</div>);
+
+      const wrapper = mount(
+        <Composer
+          components={[<EchoChildren value="spaghetti" />]}
+          render={mockRender}
+          renderPropName="children"
+        />
+      );
+      expect(wrapper.contains(<div>spaghetti</div>)).toBe(true);
+      expect(mockRender).toHaveBeenCalledTimes(1);
+      expect(mockRender.mock.calls[0]).toEqual([
+        [
+          {
+            value: 'spaghetti'
           }
         ]
       ]);
