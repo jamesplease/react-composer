@@ -3,15 +3,15 @@ import PropTypes from 'prop-types';
 
 export default function Composer({
   components = [],
-  render,
+  children,
   renderPropName,
   mapResult
 }) {
-  if (typeof render !== 'function') {
+  if (typeof children !== 'function') {
     return null;
   }
 
-  // This is the argument that we pass into `render`.
+  // This is the argument that we pass into `children`.
   const responses = [];
 
   // This is the list of components, reversed. We reverse them because the
@@ -22,7 +22,7 @@ export default function Composer({
     // When we reach the end of our `childrenComponents`, we can render out
     // the response array.
     if (childrenComponents.length === 0) {
-      return render(responses);
+      return children(responses);
     }
 
     const componentIndex = childrenComponents.length - 1;
@@ -34,9 +34,9 @@ export default function Composer({
     // In a sense, it can be thought of as the "reverse" index of `componentIndex`.
     const responseIndex = reversedComponents.length - childrenComponents.length;
 
-    // We create a clone of the childrenComponents so that subsequent calls to `render`
+    // We create a clone of the childrenComponents so that subsequent calls to `chidlren`
     // render the same tree. If we modified `reversedComponents` directly, then the tree would
-    // be different with each call to `render`.
+    // be different with each call to `children`.
     const childrenComponentsClone = [...childrenComponents];
     childrenComponentsClone.pop();
 
@@ -56,12 +56,12 @@ export default function Composer({
 }
 
 Composer.propTypes = {
-  render: PropTypes.func,
+  children: PropTypes.func,
   components: PropTypes.array,
   renderPropName: PropTypes.string,
   mapResult: PropTypes.func
 };
 
 Composer.defaultProps = {
-  renderPropName: 'render'
+  renderPropName: 'children'
 };

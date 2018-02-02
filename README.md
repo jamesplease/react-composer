@@ -12,49 +12,45 @@ Compose render prop components.
 Render props are great. Using a component with a render prop looks like the following:
 
 ```jsx
-<RenderPropComponent
-  {...config}
-  render={result => <MyComponent result={result} />}
-/>
+<RenderPropComponent {...config}>
+  {(result) => (<MyComponent result={result} />)}
+</RenderPropComponent>
 ```
 
 Sometimes you need the result of multiple `RenderPropComponent`s inside of `MyComponent`. This
 can get messy.
 
 ```jsx
-<RenderPropComponent
-  {...config}
-  render={resultOne => (
-    <RenderPropComponent
-      {...configTwo}
-      render={resultTwo => (
-        <RenderPropComponent
-          {...configThree}
-          render={resultThree => (
+<RenderPropComponent {...config}>
+  {resultOne => (
+    <RenderPropComponent {...configTwo}>
+      {resultTwo => (
+        <RenderPropComponent {...configThree}>
+          {resultThree => (
             <MyComponent results={[resultOne, resultTwo, resultThree]} />
-          )}>
+          )}
+        </RenderPropComponent>
       )}
-    />
+    </RenderPropComponent>
   )}
-/>
+</RenderPropComponent>
 ```
 
-Nesting render prop components like this is difficult to read. Use React Composer to
-clean things up.
+Nesting render prop components leads to rightward drift of your code. Use React Composer to
+prevent that drift.
 
 ```jsx
 import Composer from 'react-composer';
 
-<Composer
-  components={[
+<Composer components={[
     <RenderPropComponent {...configOne} />,
     <RenderPropComponent {...configTwo} />,
     <RenderPropComponent {...configThree} />
-  ]}
-  render={([resultOne, resultTwo, resultThree]) => (
+  ]}>
+  {([resultOne, resultTwo, resultThree]) => (
     <MyComponent results={[resultOne, resultTwo, resultThree]} />
   )}
-/>;
+</Composer>
 ```
 
 ### Installation
@@ -86,16 +82,16 @@ The render prop components to compose.
 
 > Note: If you specify a render prop on the components, it will be ignored.
 
-##### `render`
+##### `children`
 
 A function that is called with an array of results from the render prop
 components.
 
 ##### `renderPropName`
 
-The name of the component's render prop. Defaults to `"render"`.
+The name of the component's render prop. Defaults to `"children"`.
 
-> Note: Components typically use `render` or `children` as the render prop. Some
+> Note: Components typically use `children` or `render` as the render prop. Some
 > even accept both.
 
 ##### `mapResult`
@@ -110,11 +106,11 @@ render prop. You could, for instance, map the arguments to an array:
 ```jsx
 <Composer
   components={[<RenderPropComponent />]}
-  render={() => { ... }}
   mapResult={function() {
     return Array.from(arguments);
-  }}
-/>
+  }}>
+  {() => { ... }}
+</Composer>
 ```
 
 > Note: you won't often need to use this prop, but it's here if you need it.

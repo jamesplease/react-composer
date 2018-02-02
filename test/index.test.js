@@ -2,16 +2,16 @@ import React from 'react';
 import { shallow, mount } from 'enzyme';
 import Composer from '../src';
 
-function Echo({ value, render }) {
-  return render({ value });
-}
-
-function EchoChildren({ value, children }) {
+function Echo({ value, children }) {
   return children({ value });
 }
 
-function DoubleEcho({ value, render }) {
-  return render(value, value.toUpperCase());
+function EchoRender({ value, render }) {
+  return render({ value });
+}
+
+function DoubleEcho({ value, children }) {
+  return children(value, value.toUpperCase());
 }
 
 describe('React Composer', () => {
@@ -28,32 +28,32 @@ describe('React Composer', () => {
   });
 
   describe('Render, no components', () => {
-    test('It should render the return from `render`', () => {
-      const mockRender = jest.fn(() => <div>Sandwiches</div>);
+    test('It should render the return from `children`', () => {
+      const mockChildren = jest.fn(() => <div>Sandwiches</div>);
 
-      const wrapper = shallow(<Composer render={mockRender} />);
+      const wrapper = shallow(<Composer children={mockChildren} />);
       expect(wrapper.contains(<div>Sandwiches</div>)).toBe(true);
-      expect(mockRender).toHaveBeenCalledTimes(1);
+      expect(mockChildren).toHaveBeenCalledTimes(1);
       // The outer array represents all of the arguments passed to the
       // mock. The inner array is the empty array of `results` that
       // is passed as the first argument.
-      expect(mockRender.mock.calls[0]).toEqual([[]]);
+      expect(mockChildren.mock.calls[0]).toEqual([[]]);
     });
   });
 
   describe('Render, one component', () => {
     test('It should render the expected result', () => {
-      const mockRender = jest.fn(([result]) => <div>{result.value}</div>);
+      const mockChildren = jest.fn(([result]) => <div>{result.value}</div>);
 
       const wrapper = mount(
         <Composer
           components={[<Echo value="spaghetti" />]}
-          render={mockRender}
+          children={mockChildren}
         />
       );
       expect(wrapper.contains(<div>spaghetti</div>)).toBe(true);
-      expect(mockRender).toHaveBeenCalledTimes(1);
-      expect(mockRender.mock.calls[0]).toEqual([
+      expect(mockChildren).toHaveBeenCalledTimes(1);
+      expect(mockChildren.mock.calls[0]).toEqual([
         [
           {
             value: 'spaghetti'
@@ -65,7 +65,7 @@ describe('React Composer', () => {
 
   describe('Render, two components', () => {
     test('It should render the expected result', () => {
-      const mockRender = jest.fn(([resultOne, resultTwo]) => (
+      const mockChildren = jest.fn(([resultOne, resultTwo]) => (
         <div>
           {resultOne.value} {resultTwo.value}
         </div>
@@ -74,12 +74,12 @@ describe('React Composer', () => {
       const wrapper = mount(
         <Composer
           components={[<Echo value="spaghetti" />, <Echo value="pls" />]}
-          render={mockRender}
+          children={mockChildren}
         />
       );
       expect(wrapper.contains(<div>spaghetti pls</div>)).toBe(true);
-      expect(mockRender).toHaveBeenCalledTimes(1);
-      expect(mockRender.mock.calls[0]).toEqual([
+      expect(mockChildren).toHaveBeenCalledTimes(1);
+      expect(mockChildren.mock.calls[0]).toEqual([
         [
           {
             value: 'spaghetti'
@@ -94,18 +94,18 @@ describe('React Composer', () => {
 
   describe('Render, one component; custom `renderPropName`', () => {
     test('It should render the expected result', () => {
-      const mockRender = jest.fn(([result]) => <div>{result.value}</div>);
+      const mockChildren = jest.fn(([result]) => <div>{result.value}</div>);
 
       const wrapper = mount(
         <Composer
-          components={[<EchoChildren value="spaghetti" />]}
-          render={mockRender}
-          renderPropName="children"
+          components={[<EchoRender value="spaghetti" />]}
+          children={mockChildren}
+          renderPropName="render"
         />
       );
       expect(wrapper.contains(<div>spaghetti</div>)).toBe(true);
-      expect(mockRender).toHaveBeenCalledTimes(1);
-      expect(mockRender.mock.calls[0]).toEqual([
+      expect(mockChildren).toHaveBeenCalledTimes(1);
+      expect(mockChildren.mock.calls[0]).toEqual([
         [
           {
             value: 'spaghetti'
@@ -117,7 +117,7 @@ describe('React Composer', () => {
 
   describe('Render, one component; `mapResult`', () => {
     test('It should render the expected result', () => {
-      const mockRender = jest.fn(([result]) => (
+      const mockChildren = jest.fn(([result]) => (
         <div>
           {result[0]} {result[1]}
         </div>
@@ -126,15 +126,15 @@ describe('React Composer', () => {
       const wrapper = mount(
         <Composer
           components={[<DoubleEcho value="spaghetti" />]}
-          render={mockRender}
+          children={mockChildren}
           mapResult={function() {
             return Array.from(arguments);
           }}
         />
       );
       expect(wrapper.contains(<div>spaghetti SPAGHETTI</div>)).toBe(true);
-      expect(mockRender).toHaveBeenCalledTimes(1);
-      expect(mockRender.mock.calls[0]).toEqual([[['spaghetti', 'SPAGHETTI']]]);
+      expect(mockChildren).toHaveBeenCalledTimes(1);
+      expect(mockChildren.mock.calls[0]).toEqual([[['spaghetti', 'SPAGHETTI']]]);
     });
   });
 });
