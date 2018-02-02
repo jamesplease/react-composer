@@ -36,8 +36,8 @@ can get messy.
 </RenderPropComponent>
 ```
 
-Nesting render prop components like this can be difficult to read. Use React Composer to
-clean things up.
+Nesting render prop components leads to rightward drift of your code. Use React Composer to
+prevent that drift.
 
 ```jsx
 import Composer from 'react-composer';
