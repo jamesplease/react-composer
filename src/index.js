@@ -22,7 +22,7 @@ export default function Composer({
     // When we reach the end of our `childrenComponents`, we can render out
     // the response array.
     if (childrenComponents.length === 0) {
-      return children(responses);
+      return children([...responses]);
     }
 
     const componentIndex = childrenComponents.length - 1;
