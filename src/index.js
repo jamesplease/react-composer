@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default function Composer({
+export default function Composer ({
   components = [],
   children,
   renderPropName,
-  mapResult
+  mapResult,
 }) {
   if (typeof children !== 'function') {
     return null;
@@ -18,7 +18,7 @@ export default function Composer({
   // component that you list last will be the highest in the tree.
   const reversedComponents = components.reverse();
 
-  function chainComponents(childrenComponents) {
+  function chainComponents (childrenComponents) {
     // When we reach the end of our `childrenComponents`, we can render out
     // the response array.
     if (childrenComponents.length === 0) {
@@ -41,14 +41,15 @@ export default function Composer({
     childrenComponentsClone.pop();
 
     return React.cloneElement(component, {
-      [renderPropName]() {
+      [renderPropName] () {
         if (mapResult) {
           results[responseIndex] = mapResult.apply(null, arguments);
-        } else {
+        }
+        else {
           results[responseIndex] = arguments[0];
         }
         return chainComponents(childrenComponentsClone);
-      }
+      },
     });
   }
 
@@ -59,9 +60,9 @@ Composer.propTypes = {
   children: PropTypes.func,
   components: PropTypes.array,
   renderPropName: PropTypes.string,
-  mapResult: PropTypes.func
+  mapResult: PropTypes.func,
 };
 
 Composer.defaultProps = {
-  renderPropName: 'children'
+  renderPropName: 'children',
 };
