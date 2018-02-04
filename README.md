@@ -97,7 +97,7 @@ The name of the component's render prop. Defaults to `"children"`.
 ##### `mapResult`
 
 A function that is called with the same arguments that each component's render
-prop is caled with. This can be used to change the result that each component passes
+prop is called with. This can be used to change the result that each component passes
 down.
 
 Typically, this is useful for a component that passes multiple arguments to its
