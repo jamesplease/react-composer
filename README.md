@@ -27,7 +27,7 @@ can get messy.
       {resultTwo => (
         <RenderPropComponent {...configThree}>
           {resultThree => (
-            <MyComponent results={[resultOne, resultTwo, resultThree]} />
+            <MyComponent results={{resultOne, resultTwo, resultThree}} />
           )}
         </RenderPropComponent>
       )}
