@@ -12,23 +12,23 @@ export default function Composer({
   }
 
   // This is the argument that we pass into `children`.
-  const responses = [];
+  const results = [];
 
   // This is the list of components, reversed. We reverse them because the
-  // Request that you list last will be the highest in the tree.
+  // component that you list last will be the highest in the tree.
   const reversedComponents = components.reverse();
 
   function chainComponents(childrenComponents) {
     // When we reach the end of our `childrenComponents`, we can render out
     // the response array.
     if (childrenComponents.length === 0) {
-      return children([...responses]);
+      return children([...results]);
     }
 
     const componentIndex = childrenComponents.length - 1;
     const component = components[componentIndex];
 
-    // This is the index of where we should place the response within `responses`.
+    // This is the index of where we should place the response within `results`.
     // It's not the same as `componentIndex` because we reversed the components when
     // rendering out the components.
     // In a sense, it can be thought of as the "reverse" index of `componentIndex`.
@@ -43,9 +43,9 @@ export default function Composer({
     return React.cloneElement(component, {
       [renderPropName]() {
         if (mapResult) {
-          responses[responseIndex] = mapResult.apply(null, arguments);
+          results[responseIndex] = mapResult.apply(null, arguments);
         } else {
-          responses[responseIndex] = arguments[0];
+          results[responseIndex] = arguments[0];
         }
         return chainComponents(childrenComponentsClone);
       }
