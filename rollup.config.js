@@ -10,23 +10,23 @@ var config = {
   moduleName: 'ReactComposer',
   external: ['react'],
   globals: {
-    react: 'React'
+    react: 'React',
   },
   context: 'this',
   plugins: [
     nodeResolve({
-      jsnext: true
+      jsnext: true,
     }),
     commonjs({
-      include: 'node_modules/**'
+      include: 'node_modules/**',
     }),
     babel({
-      exclude: 'node_modules/**'
+      exclude: 'node_modules/**',
     }),
     replace({
-      'process.env.NODE_ENV': JSON.stringify(env)
-    })
-  ]
+      'process.env.NODE_ENV': JSON.stringify(env),
+    }),
+  ],
 };
 
 if (env === 'production') {
@@ -36,8 +36,8 @@ if (env === 'production') {
         pure_getters: true,
         unsafe: true,
         unsafe_comps: true,
-        warnings: false
-      }
+        warnings: false,
+      },
     })
   );
 }
