@@ -17,7 +17,7 @@ Render props are great. Using a component with a render prop looks like the foll
 </RenderPropComponent>
 ```
 
-Sometimes you need the result of multiple `RenderPropComponent`s inside of `MyComponent`. This
+Sometimes you need the result of multiple render prop components inside of `MyComponent`. This
 can get messy.
 
 ```jsx
@@ -48,7 +48,7 @@ import Composer from 'react-composer';
     <RenderPropComponent {...configThree} />
   ]}>
   {([resultOne, resultTwo, resultThree]) => (
-    <MyComponent results={[resultOne, resultTwo, resultThree]} />
+    <MyComponent results={{resultOne, resultTwo, resultThree}} />
   )}
 </Composer>
 ```
@@ -80,7 +80,8 @@ follows:
 
 The render prop components to compose.
 
-> Note: If you specify a render prop on the components, it will be ignored.
+> Note: You do not need to specify the render prop on the components. If you do specify the render prop, it will
+> be ignored.
 
 ##### `children`
 
@@ -113,7 +114,7 @@ render prop. You could, for instance, map the arguments to an array:
 </Composer>
 ```
 
-> Note: you won't often need to use this prop, but it's here if you need it.
+> Note: This is an advanced feature that you won't often need to use, but it's here should you need it.
 
 ### Guides
 
@@ -144,3 +145,12 @@ then your tree will render like so:
 
 > Note: Do you think the render order should be reversed? I'm open to that change. Leave your comments
 > over in [Issue #7](https://github.com/jmeas/react-composer/issues/7).
+
+#### Example Usage
+
+Here are some examples of render prop components that benefit from React Composer are:
+
+- React's new Context API. See [this example](https://codesandbox.io/s/92pj14134y) by [Kent Dodds](https://twitter.com/kentcdodds).
+- [React Request](https://github.com/jmeas/react-request)
+
+Do you know of a component that you think benefits from React Composer? Open a Pull Request and add it to the list!
