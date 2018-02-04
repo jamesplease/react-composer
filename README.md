@@ -148,7 +148,7 @@ then your tree will render like so:
 
 #### Example Usage
 
-Here are some examples of render prop components that benefit from React Composer are:
+Here are some examples of render prop components that benefit from React Composer:
 
 - React's new Context API. See [this example](https://codesandbox.io/s/92pj14134y) by [Kent Dodds](https://twitter.com/kentcdodds).
 - [React Request](https://github.com/jmeas/react-request)
