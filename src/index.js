@@ -26,7 +26,13 @@ export default function Composer({
     }
 
     const componentIndex = childrenComponents.length - 1;
-    const component = components[componentIndex];
+
+    const component =
+      // Each props.components entry is either an element or function [element factory]
+      // When it is a function, produce an element by invoking it with currently accumulated results.
+      typeof components[componentIndex] === 'function'
+        ? components[componentIndex](results)
+        : components[componentIndex];
 
     // This is the index of where we should place the response within `results`.
     // It's not the same as `componentIndex` because we reversed the components when
@@ -57,7 +63,9 @@ export default function Composer({
 
 Composer.propTypes = {
   children: PropTypes.func,
-  components: PropTypes.array,
+  components: PropTypes.arrayOf(
+    PropTypes.oneOfType([PropTypes.element, PropTypes.func])
+  ),
   renderPropName: PropTypes.string,
   mapResult: PropTypes.func
 };

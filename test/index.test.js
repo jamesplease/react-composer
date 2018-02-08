@@ -2,6 +2,11 @@ import React from 'react';
 import { shallow, mount } from 'enzyme';
 import Composer from '../src';
 
+// Does nothing other than render so that its props may be inspected
+function MyComponent(props) {
+  return <div>Inspect my props!</div>;
+}
+
 function Echo({ value, children }) {
   return children({ value });
 }
@@ -88,6 +93,41 @@ describe('React Composer', () => {
             value: 'pls'
           }
         ]
+      ]);
+    });
+  });
+
+  describe('Render, three components; elements and functions', () => {
+    test('It supports both elements and functions in props.components', () => {
+      const wrapper = mount(
+        <Composer
+          components={[
+            // Simple elements may be passed where previous results are not required.
+            <Echo value="outer" />,
+
+            // A function [element factory] may be passed that is invoked with
+            // the currently accumulated results to produce an element.
+            ([outerResult]) => {
+              expect(outerResult).toEqual({ value: 'outer' });
+              return <Echo value={`${outerResult.value} + middle`} />;
+            },
+
+            ([outerResult, middleResult]) => {
+              // Assert within element factory to avoid insane error messages for failed tests :)
+              expect(outerResult).toEqual({ value: 'outer' });
+              expect(middleResult).toEqual({ value: 'outer + middle' });
+              return <Echo value={`${middleResult.value} + inner`} />;
+            }
+          ]}
+          children={results => <MyComponent results={results} />}
+        />
+      );
+
+      expect(wrapper.find(Echo).length).toEqual(3);
+      expect(wrapper.find(MyComponent).prop('results')).toEqual([
+        { value: 'outer' },
+        { value: 'outer + middle' },
+        { value: 'outer + middle + inner' }
       ]);
     });
   });
