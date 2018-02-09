@@ -172,3 +172,8 @@ Here are some examples of render prop components that benefit from React Compose
 - [React Request](https://github.com/jmeas/react-request)
 
 Do you know of a component that you think benefits from React Composer? Open a Pull Request and add it to the list!
+
+### Contributing
+
+Are you interested in helping out with this project? That's awesome – thank you! Head on over to
+[the contributing guide](./CONTRIBUTING.md) to get started.
