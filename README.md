@@ -78,7 +78,25 @@ follows:
 
 ##### `components`
 
-The render prop components to compose.
+The render prop components to compose. This is an array of [React elements](https://reactjs.org/docs/glossary.html#elements) and/or functions that return elements given the currently accumulated results.
+
+```jsx
+<Composer
+  components={[
+    // Simple elements may be passed where previous results are not required.
+    <Outer />,
+    // A function may be passed that will be invoked with the currently accumulated results.
+    // Functions provided must return a valid React element.
+    ([outerResults]) => <Middle results={[outerResults]} />,
+    ([outerResults, middleResults]) => (
+      <Inner results={[outerResults, middleResults]} />
+    )
+  ]}>
+  {([outerResults, middleResults, innerResults]) => {
+    /* ... */
+  }}
+</Composer>
+```
 
 > Note: You do not need to specify the render prop on the components. If you do specify the render prop, it will
 > be ignored.
