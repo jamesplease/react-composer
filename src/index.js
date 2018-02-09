@@ -31,7 +31,7 @@ export default function Composer({
       // Each props.components entry is either an element or function [element factory]
       // When it is a function, produce an element by invoking it with currently accumulated results.
       typeof components[componentIndex] === 'function'
-        ? components[componentIndex](results)
+        ? components[componentIndex]([...results])
         : components[componentIndex];
 
     // This is the index of where we should place the response within `results`.

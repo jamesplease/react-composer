@@ -99,6 +99,7 @@ describe('React Composer', () => {
 
   describe('Render, three components; elements and functions', () => {
     test('It supports both elements and functions in props.components', () => {
+      let tempOuterResults;
       const wrapper = mount(
         <Composer
           components={[
@@ -107,12 +108,16 @@ describe('React Composer', () => {
 
             // A function [element factory] may be passed that is invoked with
             // the currently accumulated results to produce an element.
-            ([outerResult]) => {
+            (results) => {
+              tempOuterResults = results;
+              const [outerResult] = results;
               expect(outerResult).toEqual({ value: 'outer' });
               return <Echo value={`${outerResult.value} + middle`} />;
             },
 
-            ([outerResult, middleResult]) => {
+            (results) => {
+              expect(tempOuterResults).not.toBe(results);
+              const [outerResult, middleResult] = results;
               // Assert within element factory to avoid insane error messages for failed tests :)
               expect(outerResult).toEqual({ value: 'outer' });
               expect(middleResult).toEqual({ value: 'outer + middle' });
