@@ -128,6 +128,15 @@ describe('React Composer', () => {
         />
       );
 
+      const outer = wrapper.childAt(0);
+      expect(outer.prop('value')).toBe('outer');
+
+      const middle = outer.childAt(0);
+      expect(middle.prop('value')).toBe('outer + middle');
+
+      const inner = middle.childAt(0);
+      expect(inner.prop('value')).toBe('outer + middle + inner');
+
       expect(wrapper.find(Echo).length).toEqual(3);
       expect(wrapper.find(MyComponent).prop('results')).toEqual([
         { value: 'outer' },
