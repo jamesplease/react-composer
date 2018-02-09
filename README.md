@@ -147,7 +147,8 @@ prop. So, for instance, this library will not work if your component has an API 
 
 #### Render Order
 
-The components render last-to-first. So, for instance, if you pass
+The first item in the `components` array will be the outermost component that is rendered. So, for instance,
+if you pass
 
 ```jsx
 <Composer components={[<A/>, <B/>, <C/>]}>
@@ -156,13 +157,10 @@ The components render last-to-first. So, for instance, if you pass
 then your tree will render like so:
 
 ```
-- C
+- A
   - B
-    - A
+    - C
 ```
-
-> Note: Do you think the render order should be reversed? I'm open to that change. Leave your comments
-> over in [Issue #7](https://github.com/jmeas/react-composer/issues/7).
 
 #### Example Usage
 
