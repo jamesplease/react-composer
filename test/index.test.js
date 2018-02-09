@@ -108,14 +108,14 @@ describe('React Composer', () => {
 
             // A function [element factory] may be passed that is invoked with
             // the currently accumulated results to produce an element.
-            (results) => {
+            results => {
               tempOuterResults = results;
               const [outerResult] = results;
               expect(outerResult).toEqual({ value: 'outer' });
               return <Echo value={`${outerResult.value} + middle`} />;
             },
 
-            (results) => {
+            results => {
               expect(tempOuterResults).not.toBe(results);
               const [outerResult, middleResult] = results;
               // Assert within element factory to avoid insane error messages for failed tests :)
@@ -179,7 +179,9 @@ describe('React Composer', () => {
       );
       expect(wrapper.contains(<div>spaghetti SPAGHETTI</div>)).toBe(true);
       expect(mockChildren).toHaveBeenCalledTimes(1);
-      expect(mockChildren.mock.calls[0]).toEqual([[['spaghetti', 'SPAGHETTI']]]);
+      expect(mockChildren.mock.calls[0]).toEqual([
+        [['spaghetti', 'SPAGHETTI']]
+      ]);
     });
   });
 });
