@@ -5,9 +5,10 @@ export default function Composer({
   components = [],
   children,
   renderPropName,
-  mapResult
+  mapResult,
+  render
 }) {
-  if (typeof children !== 'function') {
+  if (typeof children !== 'function' && typeof render !== 'function') {
     return null;
   }
 
@@ -18,6 +19,9 @@ export default function Composer({
     // When we reach the end of our `childrenComponents`, we can render out
     // the response array.
     if (childrenComponents.length === 0) {
+      if(typeof render === 'function') {
+        return render([...results]);
+      }
       return children([...results]);
     }
 
