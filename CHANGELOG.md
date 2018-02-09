@@ -1,5 +1,12 @@
 # Changelog
 
+### v3.1.1 (2018/2/8)
+
+**Bug Fixes**
+
+* This ensures that the argument passed to functions within the `components`
+  array is always a new array.
+
 ### v3.1.0 (2018/2/8)
 
 **New Features**
