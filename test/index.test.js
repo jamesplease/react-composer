@@ -19,6 +19,23 @@ function DoubleEcho({ value, children }) {
   return children(value, value.toUpperCase());
 }
 
+/**
+ * Assert expected hierarchy of components
+ * @param {Wrapper} wrapper
+ * @param {ReactComponent[]} components
+ */
+function expectComponentTree(wrapper, components) {
+  const expectedMsg =
+    'Expected component tree: ' +
+    components.map(({ displayName, name }) => displayName || name).join(' > ');
+  expect([
+    components.reduce((wrapper, selector) => {
+      return wrapper.find(selector);
+    }, wrapper).length,
+    expectedMsg
+  ]).toEqual([1, expectedMsg]);
+}
+
 describe('React Composer', () => {
   describe('Null values', () => {
     test('No props', () => {
@@ -97,6 +114,35 @@ describe('React Composer', () => {
     });
   });
 
+  describe('Render order', () => {
+    test('It renders first:Outer, last:Inner', () => {
+      const Outer = ({ children }) => children('Outer result');
+      const Middle = ({ children }) => children('Middle result');
+      const Inner = ({ children }) => children('Inner result');
+
+      const wrapper = mount(
+        <Composer
+          components={[<Outer />, <Middle />, <Inner />]}
+          children={results => <MyComponent results={results} />}
+        />
+      );
+
+      [
+        [Outer, Middle],
+        [Outer, Middle, Inner],
+        [Outer, Middle, Inner, MyComponent]
+      ].forEach(expectedTree => {
+        expectComponentTree(wrapper, expectedTree);
+      });
+
+      expect(wrapper.find(MyComponent).prop('results')).toEqual([
+        'Outer result',
+        'Middle result',
+        'Inner result'
+      ]);
+    });
+  });
+
   describe('Render, three components; elements and functions', () => {
     test('It supports both elements and functions in props.components', () => {
       let tempOuterResults;
@@ -168,15 +214,21 @@ describe('React Composer', () => {
         </div>
       ));
 
+      const mapResult = jest.fn(function() {
+        return Array.from(arguments);
+      });
+
       const wrapper = mount(
         <Composer
           components={[<DoubleEcho value="spaghetti" />]}
           children={mockChildren}
-          mapResult={function() {
-            return Array.from(arguments);
-          }}
+          mapResult={mapResult}
         />
       );
+
+      expect(mapResult).toHaveBeenCalledTimes(1);
+      expect(mapResult.mock.calls[0]).toEqual(['spaghetti', 'SPAGHETTI']);
+
       expect(wrapper.contains(<div>spaghetti SPAGHETTI</div>)).toBe(true);
       expect(mockChildren).toHaveBeenCalledTimes(1);
       expect(mockChildren.mock.calls[0]).toEqual([
