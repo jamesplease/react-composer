@@ -1,5 +1,17 @@
 # Changelog
 
+### v4.0.0 (2018/2/8)
+
+**Breaking**
+
+* The components now render in the opposite order. What this means is that the
+  first item in the `components` array will not be the _outermost_ element.
+  Previously, it was the _innermost_ element.
+
+  Although this is technically a breaking change, the most typical usage of
+  Composer is agnostic to the render order, so there is a chance that you
+  may not run into any problems when upgrading from v3 to v4.
+
 ### v3.1.1 (2018/2/8)
 
 **Bug Fixes**
