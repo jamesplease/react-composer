@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export default function Composer({
-  components = [],
+  components,
   children,
   renderPropName,
   mapResult
@@ -13,33 +13,39 @@ export default function Composer({
 
   /**
    * Recursively build up elements from props.components and accumulate `results` along the way.
-   * @param next The first entry in components
-   * @param ...remaining The remaining entries in components
-   * @param results This is the argument that we pass into `children`
+   * @param {Array.<ReactElement|Function>} components
+   * @param {Array} results
    * @returns {ReactElement}
    */
-  function chainComponents([next, ...remaining], results = []) {
-    // When we reach the end of our `childrenComponents`, we can render out
-    // the response array.
-    if (!next) {
+  function chainComponents(components, results) {
+    // Once components is exhausted, we can render out the results array.
+    if (!components[0]) {
       return children(results);
     }
 
-    // Each props.components entry is either an element or function [element factory]
-    // When it is a function, produce an element by invoking it with currently accumulated results.
-    const element = typeof next === 'function' ? next(results) : next;
-
-    return React.cloneElement(element, {
-      [renderPropName]() {
-        return chainComponents(
-          remaining,
-          results.concat(mapResult ? [mapResult(...arguments)] : arguments[0])
-        );
+    return React.cloneElement(
+      // Each props.components entry is either an element or function [element factory]
+      // When it is a function, produce an element by invoking it with currently accumulated results.
+      typeof components[0] === 'function'
+        ? components[0](results)
+        : components[0],
+      // Enhance the element's props with the render prop.
+      {
+        [renderPropName]() {
+          return chainComponents(
+            // Remove the current component and continue.
+            components.slice(1),
+            // results.concat([mapped]) ensures [...results, mapped] instead of [...results, ...mapped]
+            results.concat(
+              mapResult ? [mapResult.apply(null, arguments)] : arguments[0]
+            )
+          );
+        }
       }
-    });
+    );
   }
 
-  return chainComponents(components);
+  return chainComponents(components, []);
 }
 
 Composer.propTypes = {
@@ -52,5 +58,6 @@ Composer.propTypes = {
 };
 
 Composer.defaultProps = {
+  components: [],
   renderPropName: 'children'
 };
