@@ -1,6 +1,6 @@
 {
   "name": "react-composer",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "Compose render prop components",
   "main": "lib/index.js",
   "module": "es/index.js",

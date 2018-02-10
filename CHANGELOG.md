@@ -1,5 +1,11 @@
 # Changelog
 
+### v4.1.0 (2018/2/10)
+
+**Improvements**
+
+* ~20% smaller file size.
+
 ### v4.0.0 (2018/2/8)
 
 **Breaking**
