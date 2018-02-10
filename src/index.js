@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export default function Composer({
-  components = [],
+  components,
   children,
   renderPropName,
   mapResult
@@ -11,44 +11,41 @@ export default function Composer({
     return null;
   }
 
-  // This is the argument that we pass into `children`.
-  const results = [];
-
-  function chainComponents(childrenComponents) {
-    // When we reach the end of our `childrenComponents`, we can render out
-    // the response array.
-    if (childrenComponents.length === 0) {
-      return children([...results]);
+  /**
+   * Recursively build up elements from props.components and accumulate `results` along the way.
+   * @param {Array.<ReactElement|Function>} components
+   * @param {Array} results
+   * @returns {ReactElement}
+   */
+  function chainComponents(components, results) {
+    // Once components is exhausted, we can render out the results array.
+    if (!components[0]) {
+      return children(results);
     }
 
-    const index = components.length - childrenComponents.length;
-
-    const component =
+    return React.cloneElement(
       // Each props.components entry is either an element or function [element factory]
       // When it is a function, produce an element by invoking it with currently accumulated results.
-      typeof components[index] === 'function'
-        ? components[index]([...results])
-        : components[index];
-
-    // We create a clone of the childrenComponents so that subsequent calls to `chidlren`
-    // render the same tree. If we modified `reversedComponents` directly, then the tree would
-    // be different with each call to `children`.
-    const childrenComponentsClone = [...childrenComponents];
-    childrenComponentsClone.pop();
-
-    return React.cloneElement(component, {
-      [renderPropName]() {
-        if (mapResult) {
-          results[index] = mapResult.apply(null, arguments);
-        } else {
-          results[index] = arguments[0];
+      typeof components[0] === 'function'
+        ? components[0](results)
+        : components[0],
+      // Enhance the element's props with the render prop.
+      {
+        [renderPropName]() {
+          return chainComponents(
+            // Remove the current component and continue.
+            components.slice(1),
+            // results.concat([mapped]) ensures [...results, mapped] instead of [...results, ...mapped]
+            results.concat(
+              mapResult ? [mapResult.apply(null, arguments)] : arguments[0]
+            )
+          );
         }
-        return chainComponents(childrenComponentsClone);
       }
-    });
+    );
   }
 
-  return chainComponents(components);
+  return chainComponents(components, []);
 }
 
 Composer.propTypes = {
@@ -61,5 +58,6 @@ Composer.propTypes = {
 };
 
 Composer.defaultProps = {
+  components: [],
   renderPropName: 'children'
 };
