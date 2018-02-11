@@ -36,9 +36,7 @@ export default function Composer({
             // Remove the current component and continue.
             components.slice(1),
             // results.concat([mapped]) ensures [...results, mapped] instead of [...results, ...mapped]
-            results.concat(
-              mapResult ? [mapResult.apply(null, arguments)] : arguments[0]
-            )
+            results.concat([mapResult.apply(null, arguments)])
           );
         }
       }
@@ -54,10 +52,20 @@ Composer.propTypes = {
     PropTypes.oneOfType([PropTypes.element, PropTypes.func])
   ),
   renderPropName: PropTypes.string,
+  // mapResult is applied to the produced value(s) [arguments] of each render prop component.
   mapResult: PropTypes.func
 };
 
 Composer.defaultProps = {
   components: [],
-  renderPropName: 'children'
+  renderPropName: 'children',
+  // Most render prop components produce a single value for their render prop function.
+  // It is possible that a render prop function is invoked with multiple values.
+  //
+  // Default to provide produced results such as [someValue, [multiArgOne, multiArgTwo], anotherValue]
+  // When a single value is produced (this is typically the case): (producedObject) => producedObject
+  // When multiple values are produced: (producedOne, producedTwo) => [producedOne, producedTwo]
+  mapResult: function() {
+    return arguments.length === 1 ? arguments[0] : Array.from(arguments);
+  }
 };

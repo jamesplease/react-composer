@@ -192,6 +192,37 @@ describe('React Composer', () => {
     });
   });
 
+  describe('props.mapResult', () => {
+    test('It defaults to preserve render prop signatures for multi-argument render prop functions', () => {
+      const wrapper = mount(
+        <Composer
+          components={[<Echo value="one" />, <DoubleEcho value="two" />]}
+          children={results => <MyComponent results={results} />}
+        />
+      );
+
+      expect(wrapper.find(MyComponent).prop('results')).toEqual([
+        { value: 'one' },
+        ['two', 'TWO']
+      ]);
+    });
+
+    test('It can be overridden for reasons of customization', () => {
+      const wrapper = mount(
+        <Composer
+          components={[<Echo value="one" />, <DoubleEcho value="two" />]}
+          mapResult={(...args) => ({ result: args })}
+          children={results => <MyComponent results={results} />}
+        />
+      );
+
+      expect(wrapper.find(MyComponent).prop('results')).toEqual([
+        { result: [{ value: 'one' }] },
+        { result: ['two', 'TWO'] }
+      ]);
+    });
+  });
+
   describe('Render, one component; custom `renderPropName`', () => {
     test('It should render the expected result', () => {
       const mockChildren = jest.fn(([result]) => <div>{result.value}</div>);
@@ -211,37 +242,6 @@ describe('React Composer', () => {
             value: 'spaghetti'
           }
         ]
-      ]);
-    });
-  });
-
-  describe('Render, one component; `mapResult`', () => {
-    test('It should render the expected result', () => {
-      const mockChildren = jest.fn(([result]) => (
-        <div>
-          {result[0]} {result[1]}
-        </div>
-      ));
-
-      const mapResult = jest.fn(function() {
-        return Array.from(arguments);
-      });
-
-      const wrapper = mount(
-        <Composer
-          components={[<DoubleEcho value="spaghetti" />]}
-          children={mockChildren}
-          mapResult={mapResult}
-        />
-      );
-
-      expect(mapResult).toHaveBeenCalledTimes(1);
-      expect(mapResult.mock.calls[0]).toEqual(['spaghetti', 'SPAGHETTI']);
-
-      expect(wrapper.contains(<div>spaghetti SPAGHETTI</div>)).toBe(true);
-      expect(mockChildren).toHaveBeenCalledTimes(1);
-      expect(mockChildren.mock.calls[0]).toEqual([
-        [['spaghetti', 'SPAGHETTI']]
       ]);
     });
   });
