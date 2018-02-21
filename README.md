@@ -1,6 +1,6 @@
 # React Composer
 
-[![Travis build status](http://img.shields.io/travis/jmeas/react-composer.svg?style=flat)](https://travis-ci.org/jmeas/react-composer)
+[![Travis build status](http://img.shields.io/travis/jamesplease/react-composer.svg?style=flat)](https://travis-ci.org/jamesplease/react-composer)
 [![npm version](https://img.shields.io/npm/v/react-composer.svg)](https://www.npmjs.com/package/react-composer)
 [![Test Coverage](https://codeclimate.com/github/jmeas/react-composer/badges/coverage.svg)](https://codeclimate.com/github/jmeas/react-composer)
 [![gzip size](http://img.badgesize.io/https://unpkg.com/react-composer/dist/react-composer.min.js?compression=gzip)](https://unpkg.com/react-composer/dist/react-composer.min.js)
