@@ -13,7 +13,7 @@ Render props are great. Using a component with a render prop looks like the foll
 
 ```jsx
 <RenderPropComponent {...config}>
-  {(result) => (<MyComponent result={result} />)}
+  {result => <MyComponent result={result} />}
 </RenderPropComponent>
 ```
 
@@ -27,7 +27,7 @@ can get messy.
       {resultTwo => (
         <RenderPropComponent {...configThree}>
           {resultThree => (
-            <MyComponent results={{resultOne, resultTwo, resultThree}} />
+            <MyComponent results={{ resultOne, resultTwo, resultThree }} />
           )}
         </RenderPropComponent>
       )}
@@ -42,15 +42,16 @@ prevent that drift.
 ```jsx
 import Composer from 'react-composer';
 
-<Composer components={[
+<Composer
+  components={[
     <RenderPropComponent {...configOne} />,
     <RenderPropComponent {...configTwo} />,
     <RenderPropComponent {...configThree} />
   ]}>
   {([resultOne, resultTwo, resultThree]) => (
-    <MyComponent results={{resultOne, resultTwo, resultThree}} />
+    <MyComponent results={{ resultOne, resultTwo, resultThree }} />
   )}
-</Composer>
+</Composer>;
 ```
 
 ### Installation
@@ -162,12 +163,34 @@ then your tree will render like so:
     - C
 ```
 
+#### Console Warnings
+
+Render prop components often specify with [Prop Types](https://reactjs.org/docs/typechecking-with-proptypes.html)
+that the render prop is required. When using these components with React Composer, you may get a warning to the
+console.
+
+Although this does not affect the functionality of React Composer, it may be annoying to you. One way
+avoid the warnings is to define the render prop as an empty function.
+
+```js
+<Composer
+  components={[
+    <RenderPropComponent {...props} children={() => null} />
+  ]}
+  // ...
+>
+```
+
+We understand that this boilerplate is not ideal. We have another proposed solution to this problem that you might like. Unfortunately,
+the downside to this other solution is that it is a breaking API change. To read more about it, and to share your opinion on whether we
+should make the breaking change, head over to [Issue #43](https://github.com/jamesplease/react-composer/issues/43).
+
 #### Example Usage
 
 Here are some examples of render prop components that benefit from React Composer:
 
-- React's new Context API. See [this example](https://codesandbox.io/s/92pj14134y) by [Kent Dodds](https://twitter.com/kentcdodds).
-- [React Request](https://github.com/jmeas/react-request)
+* React's new Context API. See [this example](https://codesandbox.io/s/92pj14134y) by [Kent Dodds](https://twitter.com/kentcdodds).
+* [React Request](https://github.com/jmeas/react-request)
 
 Do you know of a component that you think benefits from React Composer? Open a Pull Request and add it to the list!
 
