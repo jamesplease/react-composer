@@ -190,7 +190,7 @@ should make the breaking change, head over to [Issue #43](https://github.com/jam
 Here are some examples of render prop components that benefit from React Composer:
 
 * React's new Context API. See [this example](https://codesandbox.io/s/92pj14134y) by [Kent Dodds](https://twitter.com/kentcdodds).
-* [React Request](https://github.com/jmeas/react-request)
+* [React Request](https://github.com/jamesplease/react-request)
 
 Do you know of a component that you think benefits from React Composer? Open a Pull Request and add it to the list!
 
