@@ -7,7 +7,7 @@
 
 Compose render prop components.
 
-### Motivation
+## Motivation
 
 Render props are great. Using a component with a render prop looks like the following:
 
@@ -59,7 +59,7 @@ import Composer from 'react-composer';
 Install using [npm](https://www.npmjs.com):
 
 ```
-npm install react-composer
+npm install -S react-composer
 ```
 
 or [yarn](https://yarnpkg.com/):
@@ -68,76 +68,140 @@ or [yarn](https://yarnpkg.com/):
 yarn add react-composer
 ```
 
-### API
+## API
 
-This library has one export: `Composer`.
+This library has one, default export: `Composer`.
 
-#### `<Composer />`
+### `<Composer />`
 
 Compose multiple render prop components together. The props are as
 follows:
 
-##### `components`
+### `props.children`
 
-The render prop components to compose. This is an array of [React elements](https://reactjs.org/docs/glossary.html#elements) and/or functions that return elements given the currently accumulated results.
+A render function that is called with an array of results accumulated from the render prop components.
 
 ```jsx
-<Composer
-  components={[
-    // Simple elements may be passed where previous results are not required.
-    <Outer />,
-    // A function may be passed that will be invoked with the currently accumulated results.
-    // Functions provided must return a valid React element.
-    ([outerResults]) => <Middle results={[outerResults]} />,
-    ([outerResults, middleResults]) => (
-      <Inner results={[outerResults, middleResults]} />
-    )
-  ]}>
-  {([outerResults, middleResults, innerResults]) => {
-    /* ... */
+<Composer components={[]}>
+  {results => {
+    /* Do something with results... Return a valid React element. */
   }}
 </Composer>
 ```
 
-> Note: You do not need to specify the render prop on the components. If you do specify the render prop, it will
-> be ignored.
+### `props.components`
 
-##### `children`
-
-A function that is called with an array of results from the render prop
-components.
-
-##### `renderPropName`
-
-The name of the component's render prop. Defaults to `"children"`.
-
-> Note: Components typically use `children` or `render` as the render prop. Some
-> even accept both.
-
-##### `mapResult`
-
-A function that is called with the same arguments that each component's render
-prop is called with. This can be used to change the result that each component passes
-down.
-
-Typically, this is useful for a component that passes multiple arguments to its
-render prop. You could, for instance, map the arguments to an array:
+The render prop components to compose. This is an array of [React elements](https://reactjs.org/docs/glossary.html#elements) and/or render functions that are invoked with a render function and the currently accumulated results.
 
 ```jsx
 <Composer
-  components={[<RenderPropComponent />]}
-  mapResult={function() {
-    return Array.from(arguments);
-  }}>
-  {() => { ... }}
+  components={[
+    // React elements may be passed for basic use cases
+    // props.render will be provided via React.cloneElement
+    <Outer />,
+
+    // Render functions may be passed for added flexibility and control
+    ({ results, render }) => (
+      <Middle previousResults={results} children={render} />
+    )
+  ]}>
+  {([outerResult, middleResult]) => {
+    /* Do something with results... Return a valid React element. */
+  }}
 </Composer>
 ```
 
-> Note: This is an advanced feature that you won't often need to use, but it's here should you need it.
+> **Note:** You do not need to provide `props.children` to the React element entries in `props.components`. If you do provide `props.children` to these elements, it will be ignored and overwritten.
 
-### Guides
+#### `props.components` as render functions
 
-#### Limitations
+A render function may be passed instead of a React element for added flexibility.
+
+Render functions provided must return a valid React element. Render functions will be invoked with an object containing 2 properties:
+
+1.  `results`: The currently accumulated results. You can use this for render prop components which depend on the results of other render prop components.
+2.  `render`: The render function for the component to invoke with the value produced. Plug this into your render prop component. This will typically be plugged in as `props.children` or `props.render`.
+
+```jsx
+<Composer
+  components={[
+    // props.components may contain both elements and render functions
+    <Outer />,
+    ({ /* results, */ render }) => <SomeComponent children={render} />
+  ]}>
+  {results => {
+    /* Do something with results... */
+  }}
+</Composer>
+```
+
+## Examples and Guides
+
+### Example: Render prop component(s) depending on the result of other render prop component(s)
+
+```jsx
+<Composer
+  components={[
+    <Outer />,
+    ({ results: [outerResult], render }) => (
+      <Middle fromOuter={outerResult} children={render} />
+    ),
+    ({ results, render }) => (
+      <Inner fromOuterAndMiddle={results} children={render} />
+    )
+    // ...
+  ]}>
+  {([outerResult, middleResult, innerResult]) => {
+    /* Do something with results... */
+  }}
+</Composer>
+```
+
+### Example: Render props named other than `props.children`.
+
+By default, `<Composer />` will enhance your React elements with `props.children`.
+
+Render prop components typically use `props.children` or `props.render` as their render prop. Some even accept both. For cases when your render prop component's render prop is not `props.children` you can plug `render` in directly yourself. Example:
+
+```jsx
+<Composer
+  components={[
+    // Support varying named render props
+    <RenderAsChildren />,
+    ({ render }) => <RenderAsChildren children={render} />,
+    ({ render }) => <RenderAsRender render={render} />,
+    ({ render }) => <CustomRenderPropName renderItem={render} />
+    // ...
+  ]}>
+  {results => {
+    /* Do something with results... */
+  }}
+</Composer>
+```
+
+### Example: Render prop component(s) that produce multiple arguments
+
+Example of how to handle cases when a component passes multiple arguments to its render prop rather than a single argument.
+
+```jsx
+<Composer
+  components={[
+    <Outer />,
+    // Differing render prop signature (multi-arg producers)
+    ({ render }) => (
+      <ProducesMultipleArgs>
+        {(one, two) => render([one, two])}
+      </ProducesMultipleArgs>
+    ),
+    <Inner />
+  ]}>
+  {([outerResult, [one, two], innerResult]) => {
+    /* Do something with results... */
+  }}
+</Composer>
+```
+
+### Limitations
 
 This library only works for render prop components that have a single render
 prop. So, for instance, this library will not work if your component has an API like the following:
@@ -146,7 +210,7 @@ prop. So, for instance, this library will not work if your component has an API 
 <RenderPropComponent onSuccess={onSuccess} onError={onError} />
 ```
 
-#### Render Order
+### Render Order
 
 The first item in the `components` array will be the outermost component that is rendered. So, for instance,
 if you pass
@@ -163,16 +227,16 @@ then your tree will render like so:
     - C
 ```
 
-#### Console Warnings
+### Console Warnings
 
-Render prop components often specify with [Prop Types](https://reactjs.org/docs/typechecking-with-proptypes.html)
-that the render prop is required. When using these components with React Composer, you may get a warning to the
+Render prop components often specify with [PropTypes](https://reactjs.org/docs/typechecking-with-proptypes.html)
+that the render prop is required. When using these components with React Composer, you may get a warning in the
 console.
 
-Although this does not affect the functionality of React Composer, it may be annoying to you. One way
-avoid the warnings is to define the render prop as an empty function.
+One way to eliminate the warnings is to define the render prop as an empty function knowning that `Composer` will
+overwrite it with the real render function.
 
-```js
+```jsx
 <Composer
   components={[
     <RenderPropComponent {...props} children={() => null} />
@@ -181,20 +245,30 @@ avoid the warnings is to define the render prop as an empty function.
 >
 ```
 
-We understand that this boilerplate is not ideal. We have another proposed solution to this problem that you might like. Unfortunately,
-the downside to this other solution is that it is a breaking API change. To read more about it, and to share your opinion on whether we
-should make the breaking change, head over to [Issue #43](https://github.com/jamesplease/react-composer/issues/43).
+Alternatively, you can leverage the flexibility of the `props.components` as functions API and plug the render function in directly yourself.
 
-#### Example Usage
+```jsx
+<Composer
+  components={[
+    ({render}) => <RenderPropComponent {...props} children={render} />
+  ]}
+  // ...
+>
+```
+
+### Example Usage
 
 Here are some examples of render prop components that benefit from React Composer:
 
 * React's new Context API. See [this example](https://codesandbox.io/s/92pj14134y) by [Kent Dodds](https://twitter.com/kentcdodds).
-* [React Request](https://github.com/jamesplease/react-request)
+  <<<<<<< HEAD
+* # [React Request](https://github.com/jamesplease/react-request)
+* [React Request](https://github.com/jmeas/react-request)
+  > > > > > > > Update README for new components as functions API
 
 Do you know of a component that you think benefits from React Composer? Open a Pull Request and add it to the list!
 
-### Contributing
+## Contributing
 
 Are you interested in helping out with this project? That's awesome – thank you! Head on over to
 [the contributing guide](./CONTRIBUTING.md) to get started.
