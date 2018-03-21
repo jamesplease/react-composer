@@ -97,7 +97,7 @@ The render prop components to compose. This is an array of [React elements](http
 <Composer
   components={[
     // React elements may be passed for basic use cases
-    // props.render will be provided via React.cloneElement
+    // props.children will be provided via React.cloneElement
     <Outer />,
 
     // Render functions may be passed for added flexibility and control
