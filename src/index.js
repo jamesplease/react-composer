@@ -5,7 +5,6 @@ export default function Composer(props) {
   return renderRecursive(props.components, [], props.children);
 }
 
-// Figure out WTF transform-react-remove-prop-types isn't really working
 Composer.propTypes = {
   children: PropTypes.func.isRequired,
   components: PropTypes.arrayOf(
