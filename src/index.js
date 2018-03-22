@@ -2,7 +2,7 @@ import { cloneElement } from 'react';
 import PropTypes from 'prop-types';
 
 export default function Composer(props) {
-  return renderRecursive(props.components, [], props.children);
+  return renderRecursive(props.children, props.components);
 }
 
 Composer.propTypes = {
@@ -14,12 +14,13 @@ Composer.propTypes = {
 
 /**
  * Recursively build up elements from props.components and accumulate `results` along the way.
- * @param {Array.<ReactElement|Function>} remaining
- * @param {Array} results
  * @param {function} render
+ * @param {Array.<ReactElement|Function>} remaining
+ * @param {Array} [results]
  * @returns {ReactElement}
  */
-function renderRecursive(remaining, results, render) {
+function renderRecursive(render, remaining, results) {
+  results = results || [];
   // Once components is exhausted, we can render out the results array.
   if (!remaining[0]) {
     return render(results);
@@ -28,7 +29,7 @@ function renderRecursive(remaining, results, render) {
   // Continue recursion for remaining items.
   // results.concat([value]) ensures [...results, value] instead of [...results, ...value]
   function nextRender(value) {
-    return renderRecursive(remaining.slice(1), results.concat([value]), render);
+    return renderRecursive(render, remaining.slice(1), results.concat([value]));
   }
 
   // Each props.components entry is either an element or function [element factory]
