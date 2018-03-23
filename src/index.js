@@ -1,63 +1,41 @@
-import React from 'react';
+import { cloneElement } from 'react';
 import PropTypes from 'prop-types';
 
-export default function Composer({
-  components,
-  children,
-  renderPropName,
-  mapResult
-}) {
-  if (typeof children !== 'function') {
-    return null;
-  }
-
-  /**
-   * Recursively build up elements from props.components and accumulate `results` along the way.
-   * @param {Array.<ReactElement|Function>} components
-   * @param {Array} results
-   * @returns {ReactElement}
-   */
-  function chainComponents(components, results) {
-    // Once components is exhausted, we can render out the results array.
-    if (!components[0]) {
-      return children(results);
-    }
-
-    return React.cloneElement(
-      // Each props.components entry is either an element or function [element factory]
-      // When it is a function, produce an element by invoking it with currently accumulated results.
-      typeof components[0] === 'function'
-        ? components[0](results)
-        : components[0],
-      // Enhance the element's props with the render prop.
-      {
-        [renderPropName]() {
-          return chainComponents(
-            // Remove the current component and continue.
-            components.slice(1),
-            // results.concat([mapped]) ensures [...results, mapped] instead of [...results, ...mapped]
-            results.concat(
-              mapResult ? [mapResult.apply(null, arguments)] : arguments[0]
-            )
-          );
-        }
-      }
-    );
-  }
-
-  return chainComponents(components, []);
+export default function Composer(props) {
+  return renderRecursive(props.children, props.components);
 }
 
 Composer.propTypes = {
-  children: PropTypes.func,
+  children: PropTypes.func.isRequired,
   components: PropTypes.arrayOf(
     PropTypes.oneOfType([PropTypes.element, PropTypes.func])
-  ),
-  renderPropName: PropTypes.string,
-  mapResult: PropTypes.func
+  ).isRequired
 };
 
-Composer.defaultProps = {
-  components: [],
-  renderPropName: 'children'
-};
+/**
+ * Recursively build up elements from props.components and accumulate `results` along the way.
+ * @param {function} render
+ * @param {Array.<ReactElement|Function>} remaining
+ * @param {Array} [results]
+ * @returns {ReactElement}
+ */
+function renderRecursive(render, remaining, results) {
+  results = results || [];
+  // Once components is exhausted, we can render out the results array.
+  if (!remaining[0]) {
+    return render(results);
+  }
+
+  // Continue recursion for remaining items.
+  // results.concat([value]) ensures [...results, value] instead of [...results, ...value]
+  function nextRender(value) {
+    return renderRecursive(render, remaining.slice(1), results.concat([value]));
+  }
+
+  // Each props.components entry is either an element or function [element factory]
+  return typeof remaining[0] === 'function'
+    ? // When it is a function, produce an element by invoking it with "render component values".
+      remaining[0]({ results, render: nextRender })
+    : // When it is an element, enhance the element's props with the render prop.
+      cloneElement(remaining[0], { children: nextRender });
+}

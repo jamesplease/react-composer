@@ -3,7 +3,7 @@ import { shallow, mount } from 'enzyme';
 import Composer from '../src';
 
 // Does nothing other than render so that its props may be inspected
-function MyComponent(props) {
+function MyComponent(/* props */) {
   return <div>Inspect my props!</div>;
 }
 
@@ -11,8 +11,8 @@ function Echo({ value, children }) {
   return children({ value });
 }
 
-function EchoRender({ value, render }) {
-  return render({ value });
+function EchoRenderProp({ value, renderProp }) {
+  return renderProp({ value });
 }
 
 function DoubleEcho({ value, children }) {
@@ -37,23 +37,13 @@ function expectComponentTree(wrapper, components) {
 }
 
 describe('React Composer', () => {
-  describe('Null values', () => {
-    test('No props', () => {
-      const wrapper = shallow(<Composer />);
-      expect(wrapper.type()).toBe(null);
-    });
-
-    test('No render', () => {
-      const wrapper = shallow(<Composer components={[]} />);
-      expect(wrapper.type()).toBe(null);
-    });
-  });
-
   describe('Render, no components', () => {
     test('It should render the return from `children`', () => {
       const mockChildren = jest.fn(() => <div>Sandwiches</div>);
 
-      const wrapper = shallow(<Composer children={mockChildren} />);
+      const wrapper = shallow(
+        <Composer components={[]} children={mockChildren} />
+      );
       expect(wrapper.contains(<div>Sandwiches</div>)).toBe(true);
       expect(mockChildren).toHaveBeenCalledTimes(1);
       // The outer array represents all of the arguments passed to the
@@ -143,36 +133,29 @@ describe('React Composer', () => {
     });
   });
 
-  describe('Render, three components; elements and functions', () => {
-    test('It supports both elements and functions in props.components', () => {
-      let tempOuterResults;
+  describe('props.components as functions', () => {
+    test('It enables utilizing outer results for inner components', () => {
       const wrapper = mount(
         <Composer
           components={[
-            // Simple elements may be passed where previous results are not required.
+            // React elements may be passed for simple/basic use cases.
             <Echo value="outer" />,
 
-            // A function [element factory] may be passed that is invoked with
-            // the currently accumulated results to produce an element.
-            results => {
-              tempOuterResults = results;
-              const [outerResult] = results;
-              expect(outerResult).toEqual({ value: 'outer' });
-              return <Echo value={`${outerResult.value} + middle`} />;
-            },
+            // A function may be passed to produce an element.
+            // It will be invoked with renderComponentValues.
+            ({ render, results: [outerResult] }) => (
+              <Echo value={`${outerResult.value} + middle`} children={render} />
+            ),
 
-            results => {
-              expect(tempOuterResults).not.toBe(results);
-              const [outerResult, middleResult] = results;
-              // Assert within element factory to avoid insane error messages for failed tests :)
-              expect(outerResult).toEqual({ value: 'outer' });
-              expect(middleResult).toEqual({ value: 'outer + middle' });
-              return <Echo value={`${middleResult.value} + inner`} />;
-            }
+            ({ render, results: [, middleResult] }) => (
+              <Echo value={`${middleResult.value} + inner`} children={render} />
+            )
           ]}
           children={results => <MyComponent results={results} />}
         />
       );
+
+      expect(wrapper.find(Echo).length).toEqual(3);
 
       const outer = wrapper.childAt(0);
       expect(outer.prop('value')).toBe('outer');
@@ -183,65 +166,49 @@ describe('React Composer', () => {
       const inner = middle.childAt(0);
       expect(inner.prop('value')).toBe('outer + middle + inner');
 
-      expect(wrapper.find(Echo).length).toEqual(3);
       expect(wrapper.find(MyComponent).prop('results')).toEqual([
         { value: 'outer' },
         { value: 'outer + middle' },
         { value: 'outer + middle + inner' }
       ]);
     });
-  });
 
-  describe('Render, one component; custom `renderPropName`', () => {
-    test('It should render the expected result', () => {
-      const mockChildren = jest.fn(([result]) => <div>{result.value}</div>);
-
+    test('It enables composing with varying render prop names', () => {
       const wrapper = mount(
         <Composer
-          components={[<EchoRender value="spaghetti" />]}
-          children={mockChildren}
-          renderPropName="render"
+          components={[
+            <Echo value="one" />,
+            ({ render }) => <EchoRenderProp value="two" renderProp={render} />
+          ]}
+          children={results => <MyComponent results={results} />}
         />
       );
-      expect(wrapper.contains(<div>spaghetti</div>)).toBe(true);
-      expect(mockChildren).toHaveBeenCalledTimes(1);
-      expect(mockChildren.mock.calls[0]).toEqual([
-        [
-          {
-            value: 'spaghetti'
-          }
-        ]
+
+      expect(wrapper.find(MyComponent).prop('results')).toEqual([
+        { value: 'one' },
+        { value: 'two' }
       ]);
     });
-  });
 
-  describe('Render, one component; `mapResult`', () => {
-    test('It should render the expected result', () => {
-      const mockChildren = jest.fn(([result]) => (
-        <div>
-          {result[0]} {result[1]}
-        </div>
-      ));
-
-      const mapResult = jest.fn(function() {
-        return Array.from(arguments);
-      });
-
+    test('It enables composing with multi-argument producers', () => {
       const wrapper = mount(
         <Composer
-          components={[<DoubleEcho value="spaghetti" />]}
-          children={mockChildren}
-          mapResult={mapResult}
+          components={[
+            <Echo value="one" />,
+            // multi-argument producer
+            ({ render }) => (
+              <DoubleEcho value="two">
+                {(one, two) => render([one, two])}
+              </DoubleEcho>
+            )
+          ]}
+          children={results => <MyComponent results={results} />}
         />
       );
 
-      expect(mapResult).toHaveBeenCalledTimes(1);
-      expect(mapResult.mock.calls[0]).toEqual(['spaghetti', 'SPAGHETTI']);
-
-      expect(wrapper.contains(<div>spaghetti SPAGHETTI</div>)).toBe(true);
-      expect(mockChildren).toHaveBeenCalledTimes(1);
-      expect(mockChildren.mock.calls[0]).toEqual([
-        [['spaghetti', 'SPAGHETTI']]
+      expect(wrapper.find(MyComponent).prop('results')).toEqual([
+        { value: 'one' },
+        ['two', 'TWO']
       ]);
     });
   });

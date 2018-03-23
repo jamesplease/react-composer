@@ -1,5 +1,26 @@
 # Changelog
 
+### v5.0.0 (2018/3/22)
+
+**Breaking Changes**
+
+* When a function is included in the `components` array, it will now be called
+  with a different signature. Previously, it was called with one argument, `results`,
+  an array of the currently-accumulated results.
+
+  In React Composer v5, the function will be called with an object with two properties,
+  `results` and `render`. `results` is the same value as before, and `render` is the
+  render prop that you should place on the [React element](https://reactjs.org/docs/glossary.html#elements)
+  that is returned by the function.
+
+* `mapResult` and `renderPropName` have been removed. The new signature of the function
+  described above gives you the information that you need to map the results, or to use
+  a custom render prop name.
+
+If you need help migrating from an earlier version of React Composer, we encourage you to
+read the new examples in the README. They demonstrate how you can use the new
+API to accomplish the things that you previously used `renderPropName` and `mapResult` for.
+
 ### v4.1.0 (2018/2/10)
 
 **Improvements**
