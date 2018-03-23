@@ -6,12 +6,14 @@ import replace from 'rollup-plugin-replace';
 
 var env = process.env.NODE_ENV;
 var config = {
-  format: 'umd',
-  moduleName: 'ReactComposer',
-  external: ['react'],
-  globals: {
-    react: 'React'
+  output: {
+    name: 'ReactComposer',
+    globals: {
+      react: 'React'
+    },
+    format: 'umd'
   },
+  external: ['react'],
   context: 'this',
   plugins: [
     nodeResolve({
