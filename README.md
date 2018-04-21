@@ -262,6 +262,7 @@ Here are some examples of render prop components that benefit from React Compose
 
 * React's new Context API. See [this example](https://codesandbox.io/s/92pj14134y) by [Kent Dodds](https://twitter.com/kentcdodds).
 * [React Request](https://github.com/jamesplease/react-request)
+* Apollo's [Query component](https://www.apollographql.com/docs/react/essentials/queries.html#basic)
 
 Do you know of a component that you think benefits from React Composer? Open a Pull Request and add it to the list!
 
