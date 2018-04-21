@@ -2,7 +2,7 @@
 
 [![Travis build status](http://img.shields.io/travis/jamesplease/react-composer.svg?style=flat)](https://travis-ci.org/jamesplease/react-composer)
 [![npm version](https://img.shields.io/npm/v/react-composer.svg)](https://www.npmjs.com/package/react-composer)
-[![Test Coverage](https://codeclimate.com/github/jmeas/react-composer/badges/coverage.svg)](https://codeclimate.com/github/jmeas/react-composer)
+[![Test Coverage](https://coveralls.io/repos/github/jamesplease/redux-resource/badge.svg?branch=master)](https://coveralls.io/github/jamesplease/redux-resource?branch=master)
 [![gzip size](http://img.badgesize.io/https://unpkg.com/react-composer/dist/react-composer.min.js?compression=gzip)](https://unpkg.com/react-composer/dist/react-composer.min.js)
 
 Compose render prop components.
