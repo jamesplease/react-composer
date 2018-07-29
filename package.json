@@ -9,7 +9,7 @@
     "test": "jest",
     "prepublishOnly": "npm run build",
     "prebuild": "npm run clean",
-    "build": "npm run clean && npm run build:umd && npm run build:umd:min && npm run build:es && npm run build:commonjs",
+    "build": "npm run build:umd && npm run build:umd:min && npm run build:es && npm run build:commonjs",
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
     "build:es": "cross-env BABEL_ENV=es babel src --out-dir es",
     "build:umd": "cross-env NODE_ENV=development BABEL_ENV=build rollup -c -i src/index.js -o dist/react-composer.js",
