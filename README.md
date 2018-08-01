@@ -54,7 +54,7 @@ import Composer from 'react-composer';
 </Composer>;
 ```
 
-### Installation
+## Installation
 
 Install using [npm](https://www.npmjs.com):
 
