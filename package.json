@@ -4,12 +4,13 @@
   "description": "Compose render prop components",
   "main": "lib/index.js",
   "module": "es/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "clean": "rimraf dist es tmp lib",
     "test": "jest",
     "prepublishOnly": "npm run build",
     "prebuild": "npm run clean",
-    "build": "npm run build:umd && npm run build:umd:min && npm run build:es && npm run build:commonjs",
+    "build": "npm run build:umd && npm run build:umd:min && npm run build:es && npm run build:commonjs && cp src/index.d.ts lib/",
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
     "build:es": "cross-env BABEL_ENV=es babel src --out-dir es",
     "build:umd": "cross-env NODE_ENV=development BABEL_ENV=build rollup -c -i src/index.js -o dist/react-composer.js",
@@ -40,6 +41,7 @@
     "react": "^15.0.0 || ^16.0.0"
   },
   "devDependencies": {
+    "@types/react": "^16.7.13",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-jest": "^22.1.0",
