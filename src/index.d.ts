@@ -1,4 +1,77 @@
 /// <reference types="react" />
+
+/**
+ * Examples of type usage
+ * 
+ * The simplest case, where the render function is provided as children,
+ * and is a unary function
+
+    interface StringRenderAsChildrenProps {
+        children?: (a: string) => React.ReactElement<any>;
+    }
+    const StringRenderAsChildren: React.SFC<
+        StringRenderAsChildrenProps
+    > = {} as any;
+
+ * When the render function is provided as a render prop, use the form
+ * ({ render }) => <Component render={render}
+
+    interface StringRenderAsRenderProps {
+        render?: (a: string) => React.ReactElement<any>;
+    }
+    const StringRenderAsRender: React.SFC<StringRenderAsRenderProps> = {} as any;
+
+ * When the render function is non-unary
+
+    interface StringNumberRenderAsChildrenProps {
+        children?: (a: string, b: number) => React.ReactElement<any>;
+    }
+    const StringNumberRenderAsChildren: React.SFC<
+        StringNumberRenderAsChildrenProps
+    > = {} as any;
+
+
+ * When the render function is non-unary, and also provided as a render prop,
+ * instead of children
+
+    interface StringNumberRenderAsRenderProps {
+        render?: (a: string, b: number) => React.ReactElement<any>;
+    }
+    const StringNumberRenderAsRender: React.SFC<
+        StringNumberRenderAsRenderProps
+    > = {} as any;
+
+/**
+ * Type arguments provided to Composer are the types of the arguments
+ * to the render functions for each respective component. If the function is
+ * non-unary, e.g. (a: string, b: number) => Element, then use the Array tuple
+ * form, i.e. [string, number]
+ *
+ * The components props is required to be the same length as the number of
+ * type arguments, and will cause a compile error if not.
+ *
+ * When the ({ render }) => <Component render={render} /> form is used inside
+ * the components array, then the type of render is correct for each element
+ * in the array
+ 
+    const Example = () => (
+        <Composer<string, [string, number], string, [string, number]>
+            components={[
+                <StringRenderAsChildren />,
+                <StringNumberRenderAsChildren />,
+                ({ render }) => <StringRenderAsRender render={render} />,
+                ({ render }) => <StringNumberRenderAsRender render={render} />
+            ]}
+        >
+            {([string1, [string2, number2], string3, [string4, number4]]) => {
+                // The injected arguments string1, string2 etc. should all
+                // be typed correctly
+                return null;
+            }}
+        </Composer>
+    );
+ */
+
 /**
  * Functions of varying arity that are used to type the "render" in
  * an element in the components prop, when used as:
