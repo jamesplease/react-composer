@@ -6,7 +6,7 @@
 [![Test Coverage](https://coveralls.io/repos/github/jamesplease/react-composer/badge.svg?branch=master)](https://coveralls.io/github/jamesplease/react-composer?branch=master)
 [![gzip size](http://img.badgesize.io/https://unpkg.com/react-composer/dist/react-composer.min.js?compression=gzip)](https://unpkg.com/react-composer/dist/react-composer.min.js)
 
-Compose render prop components.
+Compose [render prop](https://reactjs.org/docs/render-props.html) components.
 
 ## Motivation
 
