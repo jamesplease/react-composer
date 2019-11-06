@@ -262,7 +262,6 @@ Alternatively, you can leverage the flexibility of the `props.components` as fun
 Here are some examples of render prop components that benefit from React Composer:
 
 * React's [Context API](https://reactjs.org/docs/context.html). See [this example](https://codesandbox.io/s/92pj14134y) by [Kent Dodds](https://twitter.com/kentcdodds).
-* [React State Context](https://github.com/jamesplease/react-state-context)
 * [React Request](https://github.com/jamesplease/react-request)
 * Apollo's [Query component](https://www.apollographql.com/docs/react/essentials/queries.html#basic)
 
