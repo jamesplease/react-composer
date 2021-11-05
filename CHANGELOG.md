@@ -1,5 +1,9 @@
 # Changelog
 
+### v5.0.2 (2021/11/5)
+
+- Add React 17 to peer dependencies
+
 ### v5.0.1 (2018/7/29)
 
 - Smaller file size
