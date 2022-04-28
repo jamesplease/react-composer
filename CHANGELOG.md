@@ -1,5 +1,9 @@
 # Changelog
 
+### v5.0.3 (2022/4/28)
+
+- Add React 18 to peer dependencies
+
 ### v5.0.2 (2021/11/5)
 
 - Add React 17 to peer dependencies
